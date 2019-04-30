@@ -22,8 +22,8 @@ class ZoneController:
                 self.add_line('A', types, answer, data)
             if type == 'AAAA':
                 self.add_line('AAAA', types, answer, data)
-            if type == 'CNAME':
-                self.add_line('CNAME', types, answer, data)
+            if type == 'PTR':
+                self.add_line('PTR', types, answer, data)
             if type == 'NS':
                 self.add_line('NS', types, answer, data)
             content['types'] = types
