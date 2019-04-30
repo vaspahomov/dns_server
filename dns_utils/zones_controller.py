@@ -1,6 +1,7 @@
 import os
 import json
 from configs import ZONES_DIRECTORY
+from time import time
 
 
 class ZoneController:
@@ -17,20 +18,38 @@ class ZoneController:
                 types = content['types']
             else:
                 types = dict()
-
+            now = time() * 1000
             if type == 'A':
-                self.add_line('A', types, answer, data)
+                self.add_line('A', now, types, answer, data)
             if type == 'AAAA':
-                self.add_line('AAAA', types, answer, data)
+                self.add_line('AAAA', now, types, answer, data)
             if type == 'PTR':
-                self.add_line('PTR', types, answer, data)
+                self.add_line('PTR', now, types, answer, data)
             if type == 'NS':
-                self.add_line('NS', types, answer, data)
+                self.add_line('NS', now, types, answer, data)
             content['types'] = types
 
             self.write_zone(_name, content)
 
-    def add_line(self, t, types, answer, data):
+    def rewrite_type(self, name, qtype, records):
+        name = name.replace(".", "-")
+        _name, content = self.get_zone(name)
+        content = json.loads(content)
+        content['types'][qtype] = records
+        self.write_zone(_name, content)
+
+    def clear_cash_by_type(self, name, qtype, now):
+        record = self.get_record(name, qtype)
+        to_remove = []
+        for e in record:
+            if e[2] + e[1] <= now:
+                to_remove.append(e)
+        for e in to_remove:
+            record.remove(e)
+        print(record)
+        self.rewrite_type(name, qtype, record)
+
+    def add_line(self, t, now, types, answer, data):
         if t in types:
             typess = types[t]
             types.pop(t)
@@ -42,9 +61,14 @@ class ZoneController:
         for e in typess:
             res.append(tuple(e))
         typess = res
-        if (data, ttl) in typess:
-            typess.remove((data, ttl))
-        typess.append((data, ttl))
+        to_remove = None
+        for e in typess:
+            if e[0] == data:
+                to_remove = e
+
+        if to_remove:
+            typess.remove(to_remove)
+        typess.append((data, ttl, now))
         types[t] = typess
 
     def write_zone(self, name, content):
@@ -64,7 +88,9 @@ class ZoneController:
         zone = json.loads(self.get_zone(zone_name)[1])
         if 'types' not in zone:
             return False
-        return t in zone['types']
+        if t not in zone['types']:
+            return False
+        return len(zone['types'][t]) > 0
 
     def has_record(self, zone_name, t):
         if not self.has_zone(zone_name):

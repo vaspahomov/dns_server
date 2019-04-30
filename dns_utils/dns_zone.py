@@ -1,6 +1,7 @@
 from blockstack_zones.parse_zone_file import parse_zone_file
 import json
 
+
 class DNSZone:
     def __init__(self):
         self.zone_file_object = None
