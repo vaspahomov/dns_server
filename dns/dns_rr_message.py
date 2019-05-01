@@ -133,7 +133,9 @@ class DNSRRMessage:
                 i -= 1
                 curr.append(b)
             index += 1
-
+        if curr != []:
+            res.append(curr)
+        print(res)
         return self.join_name(res)
 
     def join_name(self, name):
@@ -200,7 +202,6 @@ class DNSRRMessage:
 
     def format_rr_message(self, name, qtype, qclass, ttl, resourse_data):
         res = b''
-
         for name_part in name.split('.'):
             res += bytes([len(name_part)])
             res += bytes(name_part.encode())
@@ -217,20 +218,7 @@ class DNSRRMessage:
         if qtype == 'WKS':
             res += b'\x00\x0b'
         if qtype == 'PTR':
-            ns_name = resourse_data.split('.')
-            ns_len = 1
-            for e in ns_name:
-                ns_len += len(e)
-            ns_len += len(ns_name)
-            res += bytes([
-                int(ns_len / 256),
-                int(ns_len % 256)
-            ])
-            ns_bytes = list(map(lambda x: x.encode(), ns_name))
-            for e in ns_bytes:
-                res += bytes([len(e)])
-                res += e
-            res += bytes([0])
+            res += b'\x00\x0c'
         if qtype == 'MX':
             res += b'\x00\x0f'
         if qtype == 'SRV':
@@ -285,5 +273,19 @@ class DNSRRMessage:
                 len(ip_byptes) % 256
             ])
             res += bytes(ip_byptes)
-
+        if qtype == 'PTR':
+            ns_name = resourse_data.split('.')
+            ns_len = 1
+            for e in ns_name:
+                ns_len += len(e)
+            ns_len += len(ns_name)
+            res += bytes([
+                int(ns_len / 256),
+                int(ns_len % 256)
+            ])
+            ns_bytes = list(map(lambda x: x.encode(), ns_name))
+            for e in ns_bytes:
+                res += bytes([len(e)])
+                res += e
+            res += bytes([0])
         return res

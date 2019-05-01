@@ -8,10 +8,13 @@ class ZoneController:
     def add_message_to_zone(self, message):
         for answer in message.answers:
             name = self.join_name(answer.names)
+            n = name
+            print(n)
+            name = name.replace('.', '-')
             _name, content = self.get_zone(name)
             content = json.loads(content)
             type = answer.qtype
-            content['name'] = name
+            content['name'] = n
             data = answer.resourse_data
 
             if 'types' in content:
@@ -25,19 +28,23 @@ class ZoneController:
                 self.add_line('AAAA', now, types, answer, data)
             if type == 'PTR':
                 self.add_line('PTR', now, types, answer, data)
+            _name2 = None
             if type == 'NS':
-                # ToDo запись NS в отдельные файлы типа ns1-e1-ru
+                _name2 = data.replace('.', '-')
+                print(_name2)
                 self.add_line('NS', now, types, answer, data)
             content['types'] = types
 
-            self.write_zone(_name, content)
+            self.write_zone(name, content)
+            if _name2:
+                self.write_zone(_name2, content)
 
     def rewrite_type(self, name, qtype, records):
         name = name.replace(".", "-")
         _name, content = self.get_zone(name)
         content = json.loads(content)
         content['types'][qtype] = records
-        self.write_zone(_name, content)
+        self.write_zone(name, content)
 
     def clear_cash_by_type(self, name, qtype, now):
         record = self.get_record(name, qtype)
@@ -72,7 +79,7 @@ class ZoneController:
         types[t] = typess
 
     def write_zone(self, name, content):
-        with open(name, 'w') as f:
+        with open(f"{ZONES_DIRECTORY}/{name}.json", 'w') as f:
             f.write(json.dumps(content))
 
     def has_zone(self, name):

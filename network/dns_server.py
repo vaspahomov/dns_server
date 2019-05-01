@@ -20,7 +20,6 @@ class DNSServer(asyncio.DatagramProtocol):
         # sock.settimeout(2)
         sock.sendto(answer, ('8.8.8.8', 53))
         print(f'Send {answer} to {server_addr}')
-        # dns actions
 
 
     def start(self):

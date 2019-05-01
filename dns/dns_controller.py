@@ -14,7 +14,7 @@ class DNSController:
         zone_controller = ZoneController()
         cash_controller = CashController()
         for question in dns_message.questions:
-            now = time() * 100
+            now = time() * 1000
             name = self.join_name(question.names)
             qtype = question.qtype
             if cash_controller.has_dns_cash_record(name, qtype, now):
