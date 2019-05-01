@@ -105,3 +105,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# PyCharm ignore
+.idea/
+
+# Zones files ignore
+dns_zones/
