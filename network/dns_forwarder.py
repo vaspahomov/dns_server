@@ -10,6 +10,6 @@ class DNSForwarder:
     def transit(self, message):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.sendto(message, (self.root_ip, self.root_port))
-        sock.settimeout(2)
+        sock.settimeout(4)
 
         return sock.recv(BUFFER_SIZE)

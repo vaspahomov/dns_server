@@ -26,6 +26,7 @@ class ZoneController:
             if type == 'PTR':
                 self.add_line('PTR', now, types, answer, data)
             if type == 'NS':
+                # ToDo запись NS в отдельные файлы типа ns1-e1-ru
                 self.add_line('NS', now, types, answer, data)
             content['types'] = types
 
@@ -46,7 +47,6 @@ class ZoneController:
                 to_remove.append(e)
         for e in to_remove:
             record.remove(e)
-        print(record)
         self.rewrite_type(name, qtype, record)
 
     def add_line(self, t, now, types, answer, data):

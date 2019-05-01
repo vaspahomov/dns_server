@@ -6,16 +6,5 @@ self_addr = '127.0.0.1', 53
 
 while True:
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    # sock.settimeout(5)
-    sock.bind(self_addr)
-    data, from_addr = sock.recvfrom(1024)
-
-    controller = DNSController()
-
-    print(f'Received {data} from {from_addr}')
-
-    answer = controller.run(data)
-    # self.transport.sendto(answer, server_addr)
-    sock.sendto(answer, from_addr)
-
-    print(f'Send {answer} to {from_addr}')
+    dns_ya_ru = b'\x00\x03\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x02ya\x02ru\x00\x00\x01\x00\x01'
+    sock.sendto(dns_ya_ru, self_addr)

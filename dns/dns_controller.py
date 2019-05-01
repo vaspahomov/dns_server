@@ -2,7 +2,6 @@ from dns.dns_message import DNSMessage
 from network.dns_forwarder import DNSForwarder
 from dns_utils.zones_controller import ZoneController
 from dns_utils.cash_controller import CashController
-from dns.dns_rr_message import DNSRRMessage
 from configs import ROOT_DNS_IP, ROOT_DNS_PORT
 from time import time
 
@@ -15,7 +14,7 @@ class DNSController:
         zone_controller = ZoneController()
         cash_controller = CashController()
         for question in dns_message.questions:
-            now = time() * 1000
+            now = time() * 100
             name = self.join_name(question.names)
             qtype = question.qtype
             if cash_controller.has_dns_cash_record(name, qtype, now):

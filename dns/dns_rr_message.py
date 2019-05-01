@@ -227,8 +227,6 @@ class DNSRRMessage:
                 int(ns_len % 256)
             ])
             ns_bytes = list(map(lambda x: x.encode(), ns_name))
-            print(ns_len)
-            print(ns_bytes)
             for e in ns_bytes:
                 res += bytes([len(e)])
                 res += e
@@ -273,8 +271,6 @@ class DNSRRMessage:
                 int(ns_len % 256)
             ])
             ns_bytes = list(map(lambda x: x.encode(), ns_name))
-            print(ns_len)
-            print(ns_bytes)
             for e in ns_bytes:
                 res += bytes([len(e)])
                 res += e
