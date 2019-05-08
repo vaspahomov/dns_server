@@ -1,4 +1,4 @@
 BUFFER_SIZE = 1024
-ROOT_DNS_IP = '8.8.8.8'
+ROOT_DNS_IP = 'ns1.e1.ru'
 ROOT_DNS_PORT = 53
 ZONES_DIRECTORY = 'dns_zones'

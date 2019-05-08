@@ -87,6 +87,7 @@ class DNSRRMessage:
         i = 0
         index = 0
         curr = []
+        a = False
         while True:
             b = ns_data_bytes[index]
             if b == 0:
@@ -98,6 +99,7 @@ class DNSRRMessage:
                     next_b = ns_data_bytes[index + 1]
                     shift = (b - 192) * 256 + next_b
                     res += self.parse_from_pointer(message, shift)
+                    a = True
                     break
                 else:
                     i = int(b)
@@ -106,36 +108,8 @@ class DNSRRMessage:
                 i -= 1
                 curr.append(b)
             index += 1
-
-        return self.join_name(res)
-
-    def get_ns_data(self, ns_data_bytes: bytes, message):
-        res = []
-        i = 0
-        index = 0
-        curr = []
-        while True:
-            b = ns_data_bytes[index]
-            if b == 0:
-                break
-            if i == 0:
-                if curr != []:
-                    res.append(curr)
-                if b >= 192:
-                    next_b = ns_data_bytes[index + 1]
-                    shift = (b - 192) * 256 + next_b
-                    res += self.parse_from_pointer(message, shift)
-                    break
-                else:
-                    i = int(b)
-                    curr = []
-            else:
-                i -= 1
-                curr.append(b)
-            index += 1
-        if curr != []:
+        if not a and curr != []:
             res.append(curr)
-        print(res)
         return self.join_name(res)
 
     def join_name(self, name):

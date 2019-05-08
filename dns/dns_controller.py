@@ -14,7 +14,7 @@ class DNSController:
         zone_controller = ZoneController()
         cash_controller = CashController()
         for question in dns_message.questions:
-            now = time() * 1000
+            now = time()
             name = self.join_name(question.names)
             qtype = question.qtype
             if cash_controller.has_dns_cash_record(name, qtype, now):
@@ -27,9 +27,9 @@ class DNSController:
         root_dns = DNSForwarder()
 
         root_answer = root_dns.transit(message)
-
         root_dns_message = DNSMessage()
         mess = root_dns_message.parse_message(root_answer)
+        # mess.print_data(mess)
 
         zone_controller.add_message_to_zone(mess)
 

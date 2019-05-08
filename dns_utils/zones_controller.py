@@ -7,37 +7,42 @@ from time import time
 class ZoneController:
     def add_message_to_zone(self, message):
         for answer in message.answers:
-            name = self.join_name(answer.names)
-            n = name
-            print(n)
-            name = name.replace('.', '-')
-            _name, content = self.get_zone(name)
-            content = json.loads(content)
-            type = answer.qtype
-            content['name'] = n
-            data = answer.resourse_data
+            self.cash_answer(answer)
+        for answer in message.authority:
+            self.cash_answer(answer)
+        for answer in message.additional_information:
+            self.cash_answer(answer)
 
-            if 'types' in content:
-                types = content['types']
-            else:
-                types = dict()
-            now = time() * 1000
-            if type == 'A':
-                self.add_line('A', now, types, answer, data)
-            if type == 'AAAA':
-                self.add_line('AAAA', now, types, answer, data)
-            if type == 'PTR':
-                self.add_line('PTR', now, types, answer, data)
-            _name2 = None
-            if type == 'NS':
-                _name2 = data.replace('.', '-')
-                print(_name2)
-                self.add_line('NS', now, types, answer, data)
-            content['types'] = types
+    def cash_answer(self, answer):
+        name = self.join_name(answer.names)
+        n = name
+        name = name.replace('.', '-')
+        _name, content = self.get_zone(name)
+        content = json.loads(content)
+        type = answer.qtype
+        content['name'] = n
+        data = answer.resourse_data
 
-            self.write_zone(name, content)
-            if _name2:
-                self.write_zone(_name2, content)
+        if 'types' in content:
+            types = content['types']
+        else:
+            types = dict()
+        now = time()
+        if type == 'A':
+            self.add_line('A', now, types, answer, data)
+        if type == 'AAAA':
+            self.add_line('AAAA', now, types, answer, data)
+        if type == 'PTR':
+            self.add_line('PTR', now, types, answer, data)
+        _name2 = None
+        if type == 'NS':
+            _name2 = data.replace('.', '-')
+            self.add_line('NS', now, types, answer, data)
+        content['types'] = types
+
+        self.write_zone(name, content)
+        if _name2:
+            self.write_zone(_name2, content)
 
     def rewrite_type(self, name, qtype, records):
         name = name.replace(".", "-")
